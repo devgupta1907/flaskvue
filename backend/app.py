@@ -20,8 +20,9 @@ migrate = Migrate(app, db)
 api = Api(app)
 CORS(app)
 
+
 class Category(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     name = db.Column(db.String(100), nullable=False, unique=True)
     books = db.relationship('Book', backref='category', lazy=True)
 
@@ -30,13 +31,13 @@ class Category(db.Model):
 
     
 class Book(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String, nullable=False, unique=True)
     price = db.Column(db.Integer, nullable=False)
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
 
     def __repr__(self):
-        return f"<Category {self.name}>"
+        return f"<Category {self.title}>"
     
 class Customer(UserMixin, db.Model):
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
@@ -68,23 +69,18 @@ category_fields = {
     "name": fields.String
 }
 
-books_fields = {
+book_fields = {
+    "id": fields.Integer,
     "title": fields.String,
     "price": fields.Integer,
-    # "category": fields.Nested(category_fields)
+    "category_id": fields.Integer
 }
-
-
-
-class BookAlreadyExists(HTTPException):
-    code = 409
-    description = "A book with this title already exists."
     
     
 class CategoryResource(Resource):
     def __init__(self):
         self.parser = reqparse.RequestParser()
-        self.parser.add_argument("name", required=True, help = "Category name is required")
+        self.parser.add_argument("name", required=True, help="Category name is required")
         
     @marshal_with(category_fields)
     def get(self):
@@ -94,7 +90,7 @@ class CategoryResource(Resource):
     @marshal_with(category_fields)
     def post(self):
         categoryArgs = self.parser.parse_args(strict=True)
-        name = categoryArgs.get("name")
+        name = categoryArgs.get("name").strip()
         
         existing_category = Category.query.filter_by(name=name).first()
         if existing_category:
@@ -112,24 +108,29 @@ class BooksResource(Resource):
         self.parser = reqparse.RequestParser()
         self.parser.add_argument("title", required=True, help = "Book title is required")
         self.parser.add_argument("price", required=True, help = "Book price is required")
-        self.parser.add_argument("category_id", required=True, help = "Category ID is required")
-    @marshal_with(books_fields)
+        self.parser.add_argument("category", required=True, help = "Category ID is required")
+    
+    @marshal_with(book_fields)
     def get(self):
         books = Book.query.all()
         return books, 200
     
-    @marshal_with(books_fields)
+    @marshal_with(book_fields)
     def post(self):
-        booksArgs =self.parser.parse_args(strict=True)
-        title = booksArgs.get("title")
+        booksArgs = self.parser.parse_args(strict=True)
+        title = booksArgs.get("title").strip()
         price = booksArgs.get("price")
-        category_id = booksArgs.get("category_id")
+        category_id = booksArgs.get("category")
+        
+        category = Category.query.get_or_404(category_id)
+        if not category:
+            abort(404, "Category not found.")
         
         existing_book = Book.query.filter_by(title=title).first()
         if existing_book:
-            raise BookAlreadyExists
+            abort(409, "A book with this title already exists.")
             
-        new_book = Book(title=title, price=price, category_id=category_id)
+        new_book = Book(title=title, price=price, category_id=category.id)
         db.session.add(new_book)
         db.session.commit()
         

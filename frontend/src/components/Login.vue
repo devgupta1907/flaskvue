@@ -90,9 +90,9 @@
         localStorage.setItem('token', token);
         console.log(token)
 
-        flashStore.showFlashMessage(messageResponse.message, "success")
+        alert(messageResponse.message)
       } catch (error) {
-        flashStore.showFlashMessage(error.message, "danger")
+        alert(error.message)
       } finally {
         email.value = ""
         password.value = ""
@@ -117,9 +117,9 @@
         const token = messageResponse.access_token;
         localStorage.setItem('token', token);
 
-        flashStore.showFlashMessage(messageResponse.message, "success")
+        alert(messageResponse.message)
       } catch (error) {
-        flashStore.showFlashMessage(error.message, "danger")
+        alert(error.message)
       } finally {
         email.value = ""
         password.value = ""

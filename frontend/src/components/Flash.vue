@@ -10,7 +10,7 @@
 </script>
 
 <template>
-    <div :class="`alert alert-${messageType} alert-dismissible fade show`" role="alert">
+    <div :class="['alert', `alert-${messageType}`, 'alert-dismissible', 'fade', 'show']" role="alert">
         {{ message }}
         <button type="button" @click="emitClose('close')" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
     </div>

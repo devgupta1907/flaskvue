@@ -7,13 +7,6 @@
   <div class="container mt-5">
     <div class="row justify-content-center">
 
-      <Flash 
-        v-if="flashStore.showFlash" 
-        :message="flashStore.flashMessage" 
-        :messageType="flashStore.flashMessageType"
-        @close="flashStore.handleFlashClose" 
-      />
-
       <div class="col-md-6">
         <form method="post" @submit.prevent="registerUser">
           <div class="mb-3">
@@ -65,11 +58,6 @@
 
 <script setup>
   import { ref } from 'vue';
-  import Flash from './Flash.vue';
-  import { useFlashStore } from '@/stores/flashStore';
-
-  const flashStore = useFlashStore();
-
 
   const name = ref('')
   const email = ref('')
@@ -118,9 +106,9 @@
       if (!response.ok) {
         throw new Error(messageResponse.message)
       }
-      flashStore.showFlashMessage(messageResponse.message, "success")
+      alert(messageResponse.message)
     } catch (error) {
-      flashStore.showFlashMessage(error.message, "danger")
+      alert(error.message)
     } finally {
       name.value = ""
       email.value = ""
@@ -144,9 +132,9 @@
       if (!response.ok) {
         throw new Error(messageResponse.message)
       }
-      flashStore.showFlashMessage(messageResponse.message, "success")
+      alert(messageResponse.message)
     } catch (error) {
-      flashStore.showFlashMessage(error.message, "danger")
+      alert(error.message)
     } finally {
       name.value = ""
       email.value = ""

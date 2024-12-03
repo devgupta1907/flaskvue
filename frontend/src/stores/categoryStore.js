@@ -3,23 +3,18 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 
 export const useCategoryStore = defineStore('category', () => {
-    const allCategories = ref([])
-    const loading = ref(false)
+    const categories = ref([])
 
-    const fetchAllCategories = async () => {
+    const fetchCategories = async () => {
         try {
-            loading.value = true
             const response = await fetch('http://localhost:5000/categories');
             if (!response.ok) {
                 throw new Error(`HTTP Error! Status: ${response.status}`);
             }
-            const jsonData = await response.json()
-            allCategories.value = jsonData
+            const data = await response.json()
+            categories.value = data
         } catch (error) {
             console.log("ERROR", error.message)
-            error.value = error.message
-        } finally {
-            loading.value = false
         }
     }
 
@@ -32,16 +27,16 @@ export const useCategoryStore = defineStore('category', () => {
                 },
                 body: JSON.stringify({ name: categoryName })
             });
-            if (!response.ok) {
-                throw new Error(`HTTP Error! Status: ${response.status}`);
-            }
+
             const newCategory = await response.json()
-            // Add to existing categories - no need to refetch
-            allCategories.value.push(newCategory)
+            if (!response.ok) {
+                throw new Error(newCategory.message);
+            }
+            
+            categories.value.push(newCategory)
             return newCategory
         } catch (error) {
-            console.log("ERROR", error.message)
-            error.value = error.message
+            console.log(error)
             throw error
         }
     }
@@ -64,9 +59,8 @@ export const useCategoryStore = defineStore('category', () => {
     // }
 
     return { 
-        allCategories, 
-        loading,
-        fetchAllCategories,
+        categories, 
+        fetchCategories,
         addCategory
     }
 })

@@ -1,43 +1,54 @@
 <template>
-
-  <div class="container m-4">
-    
-    <!-- Flash Component -->
-    <Flash 
-      v-if="flashStore.showFlash" 
-      :message="flashStore.flashMessage" 
-      :messageType="flashStore.flashMessageType"
-      @close="flashStore.handleFlashClose" 
-    />
-    
-    <h1 class="display-5 lead">Books API</h1>
-
-    <form @submit.prevent="addABook">
-      <input type="text" v-model="newBookTitle" placeholder="Enter book title" required>
-      <input type="number" v-model="newBookPrice" placeholder="Enter book price" required>
-      
-      <select v-model="selectedCategoryId" required>
-        <option v-for="cat in categoryStore.allCategories" :key="cat.id" :value="cat.id">
-          {{ cat.name }}
-        </option>
-      </select>
-
-      <button type="submit">Add Book</button>
-    </form>
-
-    <ul v-if="allBooks.length">
-      <li v-for="item in allBooks" :key="item.id">
-        {{ item.title }}
-      </li>
-    </ul>
-
-    <div v-else>
-      <p>No books are available right now!</p>
-    </div>
-  
+  <div class="container">
+        <h3 class="text-center display-5 mt-2">Books API</h3>
+        <div class="row">
+        </div>
   </div>
+  
+  <div class="container mt-5">
+    <div class="row justify-content-center">
 
+      <Flash 
+        v-if="flashStore.showFlash" 
+        :message="flashStore.flashMessage" 
+        :messageType="flashStore.flashMessageType"
+        @close="flashStore.handleFlashClose" 
+      />
+
+      <div class="col-md-6">
+        <form method="post" @submit.prevent="addABook">
+
+          <div class="mb-3">
+            <label for="title" class="form-label">Book Title</label>
+            <input type="text" v-model="newBookTitle" class="form-control" name="title" minlength="3" required>
+            <div id="titleHelp" class="form-text">{{ titleError }}</div>
+          </div>
+
+          <div class="mb-3">
+            <label for="price" class="form-label">Book Price</label>
+            <input type="number" v-model="newBookPrice" class="form-control" name="price" min="50" required>
+            <div id="priceHelp" :class="priceError ? 'form-text text-danger' : 'form-text'">{{ priceError }}</div>
+          </div>
+
+          <div class="mb-3">
+            <label for="category" class="form-label">Book Category</label>
+            <select v-model="selectedCategoryId" class="form-control" required>
+              <option v-for="category in categories" :key="category.id" :value="category.id">
+                {{ category.name }}
+              </option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <button type="submit" class="btn btn-warning" :disabled="!isFormValid">Register Book</button>
+          </div>
+          
+        </form>
+      </div>
+    </div>
+  </div>
 </template>
+
   
 <script setup>
   import { ref, onMounted, computed } from 'vue';
@@ -48,13 +59,27 @@
   const categoryStore = useCategoryStore();
   const flashStore = useFlashStore();
 
-  const selectedCategoryId = ref();
+  const categories = computed(() => categoryStore.categories);
+  const selectedCategoryId = ref(null);
   
   const allBooks = ref([]);
   const newBookTitle = ref("")
-  const newBookPrice = ref(null)
+  const newBookPrice = ref()
+
+  const titleError = computed(() => {
+    return newBookTitle.value.length < 3 ? "Book title should be longer than 3 characters." : null
+  });
+
+  const priceError = computed(() => {
+    return newBookPrice.value < 50 ? "Price should not be less than 50." : null
+  });
+
+  const isFormValid = computed(() => {
+    return !titleError.value && !priceError.value;
+  });
   
-  
+
+
   const fetchAllBooks = async () => {
     try {
       const response = await fetch('http://localhost:5000/books');
@@ -67,9 +92,6 @@
 
   const addABook = async () => {
     try {
-      if (newBookPrice.value <= 499) {
-        throw new Error("Book price is less")
-      }
       const response = await fetch('http://localhost:5000/books', {
         method: "POST",
         headers: {
@@ -78,7 +100,7 @@
         body: JSON.stringify({
           title: newBookTitle.value,
           price: newBookPrice.value,
-          category_id: selectedCategoryId.value
+          category: selectedCategoryId.value
         })
       });
       
@@ -86,27 +108,27 @@
       if (!response.ok) {
         throw new Error(dataResponse.message)
       }
-
       const newBook = dataResponse
       allBooks.value.push(newBook)
-
       flashStore.showFlashMessage("Book Added Successfully!", "success")
       
     } catch (error) {
       flashStore.showFlashMessage(error.message, "danger")
+    
     } finally {
       newBookTitle.value = ""
-      newBookPrice.value = ""
-      selectedCategoryId.value =""
+      newBookPrice.value = 0
+      selectedCategoryId.value = null
     }
   }
+  
 
   onMounted(() => {
+    flashStore.handleFlashClose();
     console.log("Books Mounted")
-    categoryStore.fetchAllCategories()
+    categoryStore.fetchCategories()
     fetchAllBooks()
   })
-  // onMounted(fetchAllBooks)
 
   </script>
   

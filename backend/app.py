@@ -208,7 +208,7 @@ class ProfessionalLogin(Resource):
         professional = Professional.query.filter_by(email=email).first()
         if professional and check_password_hash(professional.password, password):
             access_token = create_access_token(identity={'usertype': "professional", 'email': professional.email})
-            return {'message':'Login Successful', 'access_token': access_token}, 200
+            return {'message':'Login Successful', 'access_token': access_token, 'usertype': 'professional'}, 200
         abort(401, "Invalid Credentials")
         
 

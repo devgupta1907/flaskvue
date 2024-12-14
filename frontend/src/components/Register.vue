@@ -1,8 +1,6 @@
 <template>
   <div class="container">
-        <h3 class="text-center display-5 mt-2">FlaskVue Registration Page</h3>
-        <div class="row">
-        </div>
+    <h3 class="text-center display-5 mt-2">FlaskVue Registration Page</h3>
   </div>
   <div class="container mt-5">
     <div class="row justify-content-center">
@@ -65,17 +63,25 @@
   const userType = ref('')
   const pincode = ref()
   const workExp = ref()
-  const workExpError = ref('')
 
-  const validateWorkExp = () => {
+  // const validateWorkExp = () => {
+  //   if (workExp.value < 0) {
+  //     workExpError.value = "Experience cannot be negative"
+  //   } else if (workExp.value > 20) {
+  //     workExpError.value = "Experience greater than 20 years is not allowed."
+  //   } else {
+  //     workExpError.value = ""
+  //   }
+  // }
+
+  const workExpError = computed(() => {
     if (workExp.value < 0) {
-      workExpError.value = "Experience cannot be negative"
+      return "Experience cannot be negative.";
     } else if (workExp.value > 20) {
-      workExpError.value = "Experience greater than 20 years is not allowed."
-    } else {
-      workExpError.value = ""
+      return "Experience greater than 20 years is not allowed.";
     }
-  }
+    return null; // No error
+  });
 
   const registerUser = async () => {
     const registrationDetails = {

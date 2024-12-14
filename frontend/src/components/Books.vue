@@ -127,7 +127,7 @@
     flashStore.handleFlashClose();
     console.log("Books Mounted")
     categoryStore.fetchCategories()
-    fetchAllBooks()
+    // fetchAllBooks()
   })
 
   </script>

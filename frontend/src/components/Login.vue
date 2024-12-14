@@ -8,13 +8,6 @@
     <div class="container mt-5">
       <div class="row justify-content-center">
   
-        <Flash 
-          v-if="flashStore.showFlash" 
-          :message="flashStore.flashMessage" 
-          :messageType="flashStore.flashMessageType"
-          @close="flashStore.handleFlashClose" 
-        />
-  
         <div class="col-md-6">
           <form method="post" @submit.prevent="loginUser">
   
@@ -50,26 +43,23 @@
   
   <script setup>
     import { ref } from 'vue';
-    import Flash from './Flash.vue';
-    import { useFlashStore } from '@/stores/flashStore';
-  
-    const flashStore = useFlashStore();
-  
+    import { useAuthStore } from '@/stores/authStore';
+
+    const authStore = useAuthStore()
+
     const email = ref('')
     const password = ref('')
     const userType = ref('')
   
     
     const loginUser = async () => {
-      const loginDetails = {
-        email: email.value,
-        password: password.value
+      try {
+        await authStore.login(email.value, password.value, userType.value)
+        alert(`Login Successful as ${ userType.value }`)
+      } catch (error) {
+        alert(`Error: ${error.message}`)
       }
-      if (userType.value === "professional") {
-        await professionalLogin(loginDetails)
-      } else if (userType.value === "customer") {
-        await customerLogin(loginDetails)
-      }
+      
     }
   
     const professionalLogin = async (loginDetails) => {

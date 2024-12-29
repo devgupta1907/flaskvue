@@ -1,5 +1,5 @@
 backend/env
-backend/migrations
+backend/migrations/
 
 frontend/.vscode
-frontend/node_modules
+frontend/node_modules/

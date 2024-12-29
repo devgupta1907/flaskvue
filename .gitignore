@@ -1,5 +1,7 @@
-backend/env
+# Backend
+backend/env/
 backend/migrations/
 
-frontend/.vscode
+# Frontend
+frontend/.vscode/
 frontend/node_modules/

@@ -23,16 +23,7 @@
             </div>
   
             <div class="mb-3">
-              <label for="usertype" class="form-label">Usertype</label>
-              <select v-model="userType" class="form-control" required>
-                <option value="" disabled>Select Usertype</option>
-                <option value="customer">Customer</option>
-                <option value="professional">Professional</option>
-              </select>
-            </div>
-  
-            <div class="mb-3">
-              <button type="submit" class="btn btn-warning">Register</button>
+              <button type="submit" class="btn btn-warning">Login</button>
             </div>
             
           </form>
@@ -43,77 +34,50 @@
   
   <script setup>
     import { ref } from 'vue';
-    import { useAuthStore } from '@/stores/authStore';
+    import { useRouter } from 'vue-router';
 
-    const authStore = useAuthStore()
+    const router = useRouter()
 
     const email = ref('')
     const password = ref('')
-    const userType = ref('')
   
-    
     const loginUser = async () => {
       try {
-        await authStore.login(email.value, password.value, userType.value)
-        alert(`Login Successful as ${ userType.value }`)
-      } catch (error) {
-        alert(`Error: ${error.message}`)
-      }
-      
-    }
-  
-    const professionalLogin = async (loginDetails) => {
-      try {
-        const response = await fetch('http://localhost:5000/login/professional', {
+        const response = await fetch('http://localhost:5000/login', {
           method: "POST",
           headers: {
             "Content-Type": "application/json"
           },
-          body: JSON.stringify(loginDetails)
+          body: JSON.stringify({
+            email: email.value,
+            password: password.value
+          })
         })
   
         const messageResponse = await response.json()
         if (!response.ok) {
           throw new Error(messageResponse.message)
         }
-        const token = messageResponse.access_token;
-        localStorage.setItem('token', token);
-        console.log(token)
 
-        alert(messageResponse.message)
+        localStorage.setItem('token', messageResponse.token);
+        localStorage.setItem('role', messageResponse.role)
+        localStorage.setItem('email', messageResponse.email)
+
+        window.dispatchEvent(new Event('storage'))
+        console.log(messageResponse)
+
+        alert("Login Successful!")
+        messageResponse.role === 'admin' ? 
+          router.push({ name: 'CategoriesAdmin' }) : 
+          router.push({ name: 'CategoriesUser' })
+
       } catch (error) {
         alert(error.message)
       } finally {
         email.value = ""
         password.value = ""
-        userType.value = ""
       }
     }
   
-    const customerLogin = async (loginDetails) => {
-      try {
-        const response = await fetch('http://localhost:5000/login/customer', {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify(loginDetails)
-        })
-  
-        const messageResponse = await response.json()
-        if (!response.ok) {
-          throw new Error(messageResponse.message)
-        }
-        const token = messageResponse.access_token;
-        localStorage.setItem('token', token);
-
-        alert(messageResponse.message)
-      } catch (error) {
-        alert(error.message)
-      } finally {
-        email.value = ""
-        password.value = ""
-        userType.value = ""
-      }
-    }
+    
   </script>

@@ -55,7 +55,7 @@
 </template>
 
 <script setup>
-  import { ref } from 'vue';
+  import { computed, ref } from 'vue';
 
   const name = ref('')
   const email = ref('')
@@ -90,17 +90,15 @@
       password: password.value
     }
     if (userType.value === "professional") {
+      registrationDetails.role = "professional"
       registrationDetails.work_exp = workExp.value
-      await professionalRegistration(registrationDetails)
     } else if (userType.value === "customer") {
+      registrationDetails.role = "customer"
       registrationDetails.pincode = pincode.value
-      await customerRegistration(registrationDetails)
     }
-  }
 
-  const professionalRegistration = async (registrationDetails) => {
     try {
-      const response = await fetch('http://localhost:5000/register/professional', {
+      const response = await fetch('http://localhost:5000/register', {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
@@ -121,32 +119,9 @@
       password.value = ""
       userType.value = ""
       workExp.value = ""
-    }
-  }
-
-  const customerRegistration = async (registrationDetails) => {
-    try {
-      const response = await fetch('http://localhost:5000/register/customer', {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(registrationDetails)
-      })
-
-      const messageResponse = await response.json()
-      if (!response.ok) {
-        throw new Error(messageResponse.message)
-      }
-      alert(messageResponse.message)
-    } catch (error) {
-      alert(error.message)
-    } finally {
-      name.value = ""
-      email.value = ""
-      password.value = ""
-      userType.value = ""
       pincode.value = ""
     }
   }
+
+  
 </script>

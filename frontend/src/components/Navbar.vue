@@ -59,6 +59,10 @@
               <router-link class="nav-link" :to="{ name: 'ServicesUser' }">Services</router-link>
             </li>
             <li class="nav-item">
+              <router-link v-if="role === 'customer'" class="nav-link" :to="{ name: 'CustomerDashboard' }">Dashboard</router-link>
+              <router-link v-if="role === 'professional'" class="nav-link" :to="{ name: 'ProfessionalDashboard' }">Dashboard</router-link>
+            </li>
+            <li class="nav-item">
               <span class="nav-link">{{ role }} {{ email }}</span>
             </li>
             <li class="nav-item">

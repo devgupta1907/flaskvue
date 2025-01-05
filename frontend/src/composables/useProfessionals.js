@@ -2,6 +2,7 @@ import { ref } from 'vue';
 
 // Shared state
 const professionals = ref([]);
+const current_professional = ref([])
 
 
 const fetchProfessionals = async () => {
@@ -41,10 +42,31 @@ const fetchProfessionalsByService = async (service_id) => {
   }
 };
 
+const fetchCurrentProfessional = async () => {
+  try {
+    const response = await fetch('http://localhost:5000/api/professionals/current_professional', {
+      method: "GET",
+      headers: {
+        "Authentication-Token": localStorage.getItem('token')
+      }
+    });
+    if (!response.ok) {
+      throw new Error(`HTTP Error! Status: ${response.status}`);
+    }
+    const data = await response.json();
+    current_professional.value = data;
+  } catch (error) {
+    console.error("ERROR", error.message);
+  }
+};
+
 export function useProfessionals() {
   return {
     professionals,
     fetchProfessionals,
-    fetchProfessionalsByService
+    fetchProfessionalsByService,
+    current_professional,
+    fetchCurrentProfessional,
+
   };
 }

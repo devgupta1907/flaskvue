@@ -15,6 +15,8 @@ import CreateServicePage from './components/CreateServicePage.vue';
 import UpdateServicePage from './components/UpdateServicePage.vue';
 import ServicesUserPage from './components/ServicesUserPage.vue';
 import ProfessionalsByServicePage from './components/ProfessionalsByServicePage.vue';
+import CustomerDashboard from './components/CustomerDashboard.vue';
+import ProfessionalDashboard from './components/ProfessionalDashboard.vue';
 
 
 const routes = [
@@ -42,6 +44,16 @@ const routes = [
     { path: '/login', 
       component: Login, 
       name: 'Login' 
+    },
+    { path: '/customer_dashboard', 
+      component: CustomerDashboard, 
+      name: 'CustomerDashboard', 
+      meta: { requiresAuth: true, requiresRole: 'customer' }
+    },
+    { path: '/professional_dashboard', 
+      component: ProfessionalDashboard, 
+      name: 'ProfessionalDashboard', 
+      meta: { requiresAuth: true, requiresRole: 'professional' }
     },
     { path: '/admin-customers', 
       component: CustomersAdminPage, 
@@ -112,8 +124,8 @@ router.beforeEach((to, from, next) => {
 
   // If route requires specific role and user does not match, redirect
   if (requiresRole && userRole !== requiresRole) {
-    alert('Access restricted to admins');
-    return next({ name: 'Category' });
+    alert(`Access restricted to ${requiresRole}s`);
+    return next({ name: 'CategoriesUser' });
   }
 
   next();  // Proceed if no issues

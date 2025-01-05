@@ -21,26 +21,42 @@ class Role(db.Model, RoleMixin):
 
 class UsersRoles(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    role_id = db.Column(db.Integer, db.ForeignKey('role.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', name='fk_ur_user_id'))
+    role_id = db.Column(db.Integer, db.ForeignKey('role.id', name='fk_r_user_id'))
 
 
 class Customer(db.Model):
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', name='fk_cust_user_id'), primary_key=True)
     user = db.relationship('User', backref=db.backref('customer', uselist=False))
     pincode = db.Column(db.Integer, nullable=False)
+    service_requests = db.relationship('ServiceRequest', backref='customer', lazy=True)
 
     def to_dict(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns}
 
+
 class Professional(db.Model):
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id', name='fk_prof_user_id'), primary_key=True)
     user = db.relationship('User', backref=db.backref('professional', uselist=False))
     service_id = db.Column(db.Integer, db.ForeignKey('service.id', name='fk_service_id'), nullable=False)
     work_exp = db.Column(db.Integer, nullable=False)
+    service_requests = db.relationship('ServiceRequest', backref='professional', lazy=True)
 
     def to_dict(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns}
+
+    @property
+    def rating(self):
+        total_services = 0
+        total_ratings = 0
+        for request in self.service_requests:
+            if request.rating is not None and request.status != "REQUESTED":
+                total_ratings += request.rating
+                total_services += 1
+                
+        if total_services > 0:
+            return round(total_ratings / total_services, 1)
+        return 0
 
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -58,9 +74,9 @@ class Service(db.Model):
     name = db.Column(db.String, unique=True, nullable=False)
     price = db.Column(db.Integer, nullable=False)
     description = db.Column(db.Text)
-    category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id', name='fk_customers_id'), nullable=False)
     professionals = db.relationship('Professional', backref='service', lazy=True)
-    # service_requests = db.relationship('ServiceRequest', backref='service', lazy=True)
+    service_requests = db.relationship('ServiceRequest', backref='service', lazy=True)
 
     def to_dict(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns}
@@ -68,9 +84,9 @@ class Service(db.Model):
 
 class ServiceRequest(db.Model):
     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-    service_id = db.Column(db.Integer, db.ForeignKey('service.id'), nullable=False)
-    customer_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-    professional_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    service_id = db.Column(db.Integer, db.ForeignKey('service.id', name='fk_servicer_id'), nullable=False)
+    customer_id = db.Column(db.Integer, db.ForeignKey('customer.user_id', name='fk_customer_id'), nullable=False)
+    professional_id = db.Column(db.Integer, db.ForeignKey('professional.user_id', name='fk_professional_id'), nullable=False)
     status = db.Column(db.String, default="REQUESTED", nullable=False)
     rating = db.Column(db.Integer, nullable=True)
     

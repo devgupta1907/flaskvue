@@ -27,59 +27,7 @@ with app.app_context():
     db.create_all() 
 
 import application.routes
-# db = SQLAlchemy(app)
-# jwt = JWTManager(app)
-# migrate = Migrate(app, db)
-# api = Api(app)
 
-
-
-
-
-    
-# class Book(db.Model):
-#     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-#     title = db.Column(db.String, nullable=False, unique=True)
-#     price = db.Column(db.Integer, nullable=False)
-#     category_id = db.Column(db.Integer, db.ForeignKey('category.id'), nullable=False)
-
-#     def __repr__(self):
-#         return f"<Category {self.title}>"
-    
-# class Customer(UserMixin, db.Model):
-#     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-#     name = db.Column(db.String, unique=True, nullable=False)
-#     email = db.Column(db.String(120), unique=True, nullable=False)
-#     password = db.Column(db.String(60), nullable=False)
-#     pincode = db.Column(db.Integer, nullable=False)
-#     # status = db.Column(db.Enum(CustomerStatus), default=CustomerStatus.ACTIVE, nullable=False)
-#     # service_request = db.relationship('ServiceRequest', backref='customer', lazy=True)
-
-#     def __repr__(self):
-#         return f"<Customer {self.email}>"
-
-# class Professional(UserMixin, db.Model):
-#     id = db.Column(db.Integer, autoincrement=True, primary_key=True)
-#     name = db.Column(db.String, unique=True, nullable=False)
-#     email = db.Column(db.String(120), unique=True, nullable=False)
-#     password = db.Column(db.String, nullable=False)
-#     work_exp = db.Column(db.Integer, nullable=False)
-#     # service_id = db.Column(db.Integer, db.ForeignKey('service.id'), nullable=False)
-#     # service_requests = db.relationship('ServiceRequest', backref='professional', lazy=True)
-#     # status = db.Column(db.Enum(ProfessionalStatus), default=ProfessionalStatus.PENDING, nullable=False)
-    
-#     def __repr__(self):
-#         return f'<Professional {self.name}>'
-
-
-
-# book_fields = {
-#     "id": fields.Integer,
-#     "title": fields.String,
-#     "price": fields.Integer,
-#     "category_id": fields.Integer
-# }
-    
     
 
 
@@ -201,6 +149,4 @@ import application.routes
 
 
 if __name__ == "__main__":
-    # with app.app_context():
-    #     db.create_all()
     app.run()

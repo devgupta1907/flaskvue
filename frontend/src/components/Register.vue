@@ -33,11 +33,20 @@
             </select>
           </div>
 
-          <div v-if="userType === 'professional'" class="mb-3">
-            <label for="workexp" class="form-label">Work Experience</label>
-            <input v-model="workExp" @input="validateWorkExp"  type="number" class="form-control" min="0" max="20" required />
-            <div id="workExpHelp" class="form-text text-danger">{{ workExpError }}</div>
-          </div>
+          <template v-if="userType === 'professional'">
+            <div class="mb-3">
+              <label for="workexp" class="form-label">Work Experience</label>
+              <input v-model="workExp" @input="validateWorkExp"  type="number" class="form-control" min="0" max="20" required />
+              <div id="workExpHelp" class="form-text text-danger">{{ workExpError }}</div>
+            </div>
+
+            <div class="mb-3">
+              <label for="service" class="form-label">Service</label>
+              <select class="form-select" id="service" v-model="newService" name="service" required>
+                <option v-for="service in services" :key="service.id" :value="service.id">{{ service.name }}</option>
+              </select>
+            </div>
+          </template>
 
           <div v-if="userType === 'customer'" class="mb-3">
             <label for="pincode" class="form-label">Pincode</label>
@@ -55,7 +64,10 @@
 </template>
 
 <script setup>
-  import { computed, ref } from 'vue';
+  import { computed, ref, onMounted } from 'vue';
+  import { useServices } from '@/composables/useServices';
+
+  const { services, fetchServices } = useServices()
 
   const name = ref('')
   const email = ref('')
@@ -63,6 +75,7 @@
   const userType = ref('')
   const pincode = ref()
   const workExp = ref()
+  const newService = ref()
 
   // const validateWorkExp = () => {
   //   if (workExp.value < 0) {
@@ -92,6 +105,7 @@
     if (userType.value === "professional") {
       registrationDetails.role = "professional"
       registrationDetails.work_exp = workExp.value
+      registrationDetails.service_id = newService.value
     } else if (userType.value === "customer") {
       registrationDetails.role = "customer"
       registrationDetails.pincode = pincode.value
@@ -120,8 +134,13 @@
       userType.value = ""
       workExp.value = ""
       pincode.value = ""
+      newService.value =  ''
     }
   }
+
+  onMounted(() => {
+    fetchServices()
+  })
 
   
 </script>

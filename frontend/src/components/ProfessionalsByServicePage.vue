@@ -19,7 +19,7 @@
                 {{ professional.name }}
               </h5>
               <div class="text-center">
-                <a href="#" class="btn btn-warning">Book Now</a>
+                <button class="btn btn-warning" @click="createServiceRequest(service_id, professional.id)">Book Now</button>
               </div>
             </div>
           </div>
@@ -31,12 +31,29 @@
 <script setup>
     import { onMounted } from 'vue';
     import { useProfessionals } from '@/composables/useProfessionals';
+    import { useServiceRequests } from '@/composables/useServiceRequests';
     import { useRoute } from 'vue-router';
+    import { useRouter } from 'vue-router';
+
 
     const { professionals } = useProfessionals()
     
+    const router = useRouter()
     const route = useRoute()
     const service_id = route.params.serviceId
+
+    const createServiceRequest = async (service_id, professional_id) => {
+      try {
+        await useServiceRequests().createServiceRequest(service_id, professional_id)
+        alert('Service request created successfully')
+
+        router.push({ name: 'ServicesUser' })
+      } catch (error) {
+        alert(error.message)
+      }
+      
+
+    }
 
     onMounted(() => {
         useProfessionals().fetchProfessionalsByService(service_id)

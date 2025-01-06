@@ -6,6 +6,8 @@
         </div>
     </div>
 
+    <Search placeholder="Search services" @search="filterServices" />
+
     <div class="container">
         <table class="table table-hover">
             <thead>
@@ -19,7 +21,7 @@
             </thead>
 
             <tbody>
-                <tr v-for="service in services" :key="service.id">
+                <tr v-for="service in filteredServices" :key="service.id">
                     <th scope="row">{{ service.id }}</th>
                     <td>{{ service.name }}</td>
                     <td>{{ service.price }}</td>
@@ -40,10 +42,22 @@
 </template>
 
 <script setup>
-    import { onMounted, ref } from 'vue';
+    import { onMounted, ref, computed } from 'vue';
     import { useServices } from '@/composables/useServices';
+    import Search from './Search.vue';
         
     const { services, fetchServices } = useServices();
+
+    const searchQuery = ref('');
+    const filterServices = query => {
+        searchQuery.value = query;
+    }
+
+    const filteredServices = computed(() =>
+        services.value.filter(service => 
+            service.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+        )
+    )
 
     const deleteService = async (serviceId) => {
         try {

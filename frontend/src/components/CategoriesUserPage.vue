@@ -8,11 +8,13 @@
       </div>
     </div>
   </div>
+
+  <Search placeholder="Search categories" @search="filterCategories" />
   
   <div class="container mt-4">
-    <p class="lead">- found <b>{{ categories.length }}</b> category(s)</p>
+    <p class="lead">- found <b>{{ filteredCategories.length }}</b> category(s)</p>
     <div class="row">
-      <div class="col-md-3 mb-4" v-for="category in categories" :key="category.id">
+      <div class="col-md-3 mb-4" v-for="category in filteredCategories" :key="category.id">
         <div class="card border border-0">
           <div class="card-body shadow rounded">
             <h5 class="card-title text-center">
@@ -34,10 +36,22 @@
   </template>
   
 <script setup>
-  import { onMounted } from 'vue';
+  import { ref, computed, onMounted } from 'vue';
   import { useCategories } from '@/composables/useCategories';
+  import Search from './Search.vue';
   
   const { categories, fetchCategories } = useCategories();
+
+  const searchQuery = ref('');
+    const filterCategories = query => {
+        searchQuery.value = query;
+    }
+
+    const filteredCategories = computed(() =>
+        categories.value.filter(category => 
+            category.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+        )
+    )
 
   onMounted(() => {
     fetchCategories();

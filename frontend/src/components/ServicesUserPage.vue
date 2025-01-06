@@ -8,11 +8,13 @@
       </div>
     </div>
   </div>
+
+  <Search placeholder="Search services" @search="filterServices" />
   
   <div class="container mt-4">
-    <p class="lead">- found <b>{{ filteredServices.length }}</b> service(s)</p>
+    <p class="lead">- found <b>{{ finalFiltered.length }}</b> service(s)</p>
     <div class="row">
-      <div class="col-md-3 mb-4" v-for="service in filteredServices" :key="service.id">
+      <div class="col-md-3 mb-4" v-for="service in finalFiltered" :key="service.id">
         <div class="card border border-0">
           <div class="card-body shadow rounded">
             <h5 class="card-title text-center">
@@ -34,22 +36,34 @@
   </template>
   
 <script setup>
-  import { onMounted, computed } from 'vue';
+  import { onMounted, ref, computed, watch } from 'vue';
   import { useRoute } from 'vue-router';
   import { useServices } from '@/composables/useServices';
+  import Search from './Search.vue';
   
   const { services, fetchServices } = useServices();
   const route = useRoute();
   
   const categoryId = route.query.category
 
+  const searchQuery = ref('');
+    const filterServices = query => {
+        searchQuery.value = query;
+    }
   const filteredServices = computed(() => {
     if (!categoryId) return services.value;
-    return services.value.filter(service => service.category_id === parseInt(categoryId));
+    return services.value.filter(service => service.category_id === parseInt(categoryId))
   });
 
+  const finalFiltered = computed(() => {
+    return filteredServices.value.filter(service => 
+            service.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+        )
+  })
+
   onMounted(() => {
-    fetchServices();
-  });
+    fetchServices()
+  })
+
 </script>
   

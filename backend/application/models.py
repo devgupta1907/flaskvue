@@ -40,6 +40,7 @@ class Professional(db.Model):
     user = db.relationship('User', backref=db.backref('professional', uselist=False))
     service_id = db.Column(db.Integer, db.ForeignKey('service.id', name='fk_service_id'), nullable=False)
     work_exp = db.Column(db.Integer, nullable=False)
+    status = db.Column(db.String, default="PENDING", nullable=False)
     service_requests = db.relationship('ServiceRequest', backref='professional', lazy=True)
 
     def to_dict(self):

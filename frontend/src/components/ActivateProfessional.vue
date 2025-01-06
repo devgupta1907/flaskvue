@@ -1,13 +1,13 @@
 
 <template>
-    <button class="btn btn-info" @click="unblockUser(userId)">Unblock</button>
+    <button class="btn btn-info" @click="activateProfessional(professionalId)">Activate</button>
 </template>
 
 <script setup>
     import { defineProps } from 'vue';
 
     defineProps({
-        userId: {
+        professionalId: {
             type: Number,
             required: true,
         },
@@ -15,15 +15,15 @@
 
     const emit = defineEmits(['update']);
 
-    const unblockUser = async (user_id) => {
+    const activateProfessional = async (professional_id) => {
         try {
-            const response = await fetch('http://localhost:5000/api/user/unblock', {
-                method: "POST",
+            const response = await fetch('http://localhost:5000/api/professional/activate', {
+                method: "PATCH",
                 headers: {
                     "Content-Type": 'application/json',
                     "Authentication-Token": localStorage.getItem("token")
                 },
-                body: JSON.stringify({ user_id })
+                body: JSON.stringify({ professional_id })
             })
             if (!response.ok) {
                 throw new Error(`HTTP Error! Status: ${response.status}`);

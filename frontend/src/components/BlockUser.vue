@@ -17,7 +17,7 @@
 
     const blockUser = async (user_id) => {
         try {
-            const response = await fetch('http://localhost:5000/api/block_user', {
+            const response = await fetch('http://localhost:5000/api/user/block', {
                 method: "POST",
                 headers: {
                     "Content-Type": 'application/json',

@@ -2,6 +2,7 @@ import { ref } from 'vue';
 
 // Shared state
 const professionals = ref([]);
+const professionalsByService = ref([])
 const current_professional = ref([])
 
 
@@ -36,7 +37,7 @@ const fetchProfessionalsByService = async (service_id) => {
       throw new Error(`HTTP Error! Status: ${response.status}`);
     }
     const data = await response.json();
-    professionals.value = data;
+    professionalsByService.value = data;
   } catch (error) {
     console.error("ERROR", error.message);
   }
@@ -66,6 +67,7 @@ export function useProfessionals() {
     fetchProfessionals,
     fetchProfessionalsByService,
     current_professional,
+    professionalsByService,
     fetchCurrentProfessional,
 
   };

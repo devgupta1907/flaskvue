@@ -10,9 +10,9 @@
     </div>
     
     <div class="container mt-4">
-      <p class="lead">- found <b>{{ professionals.length }}</b> professionals(s)</p>
+      <p class="lead">- found <b>{{ professionalsByService.length }}</b> professional(s)</p>
       <div class="row">
-        <div class="col-md-3 mb-4" v-for="professional in professionals" :key="professional.id">
+        <div class="col-md-3 mb-4" v-for="professional in professionalsByService" :key="professional.id">
           <div class="card border border-0">
             <div class="card-body shadow rounded">
               <h5 class="card-title text-center">
@@ -32,11 +32,10 @@
     import { onMounted } from 'vue';
     import { useProfessionals } from '@/composables/useProfessionals';
     import { useServiceRequests } from '@/composables/useServiceRequests';
-    import { useRoute } from 'vue-router';
-    import { useRouter } from 'vue-router';
+    import { useRoute, useRouter } from 'vue-router';
 
 
-    const { professionals } = useProfessionals()
+    const { professionalsByService } = useProfessionals()
     
     const router = useRouter()
     const route = useRoute()

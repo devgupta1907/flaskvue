@@ -264,9 +264,7 @@ class ProfessionalsByServiceResource(Resource):
     @roles_required('customer')
     @auth_required()
     def get(self, service_id):
-        professionals = Professional.query.filter(
-            Professional.service_id == service_id
-        ).all()
+        professionals = Professional.query.filter_by(service_id = service_id).all()
 
         unblocked_professionals = [
             {
@@ -274,7 +272,7 @@ class ProfessionalsByServiceResource(Resource):
                 'name': professional.user.name
             }
             for professional in professionals
-            if professional.user and not professional.user.isBlocked
+            if professional.status == "ACTIVE"
         ]
 
         return unblocked_professionals, 200
@@ -295,8 +293,8 @@ class ServiceRequestResource(Resource):
         if professional_id == customer_id:
             abort(400, 'Professional and Customer cannot be same.')
 
-        professional = Professional.query.filter_by(user_id=professional_id).first()
-        if not professional or professional.user.isBlocked:
+        professional = Professional.query.get(professional_id)
+        if not professional or professional.status != "ACTIVE":
             abort(404, 'Professional does not exist or is blocked')
 
         service = Service.query.get(service_id)
@@ -373,6 +371,7 @@ class ServiceRequestStatusUpdateForCustomers(Resource):
             'message': f'Service requested {new_status} successfully'
         }, 200
     
+
 class RateServiceRequest(Resource):
     @roles_required('customer')
     @auth_required()
@@ -409,7 +408,10 @@ class BlockUserResource(Resource):
         user = User.query.get(user_id)
         if not user:
             abort(404, 'User not found')
+
         user.isBlocked = 1
+        if user.professional:
+            user.professional.status = "BLOCKED"
         db.session.commit()
         return {
             'message': 'User blocked successfully!'
@@ -426,11 +428,59 @@ class UnblockUserResource(Resource):
         user = User.query.get(user_id)
         if not user:
             abort(404, 'User not found')
+
         user.isBlocked = 0
+        if user.professional:
+            user.professional.status = "ACTIVE"
         db.session.commit()
         return {
             'message': 'User unblocked successfully!'
         }
+    
+class FlagProfessional(Resource):
+    @roles_required('admin')
+    @auth_required()
+    def patch(self):
+        data = request.get_json()
+        professional_id = data.get('professional_id')
+
+        if not professional_id:
+            abort(400, 'Professional ID is not provided')
+
+        user = User.query.get(professional_id)
+        if not user:
+            abort(404, 'Professional not found')
+
+        user.isBlocked = 0  # professional will not be blocked, but flagged
+        if user.professional:
+            user.professional.status = "FLAGGED"
+        db.session.commit()
+        return {
+            'message': 'Professional flagged successfully!'
+        }
+
+class ActivateProfessional(Resource):
+    @roles_required('admin')
+    @auth_required()
+    def patch(self):
+        data = request.get_json()
+        professional_id = data.get('professional_id')
+
+        if not professional_id:
+            abort(400, 'Professional ID is not provided')
+
+        user = User.query.get(professional_id)
+        if not user:
+            abort(404, 'Professional not found')
+
+        user.isBlocked = 0 
+        if user.professional:
+            user.professional.status = "ACTIVE"
+        db.session.commit()
+        return {
+            'message': 'Professional activated successfully!'
+        }
+
 
 api.add_resource(CategoryResource, '/categories')
 api.add_resource(ServiceResource, '/services')
@@ -448,5 +498,7 @@ api.add_resource(RateServiceRequest, '/customer/service_request/rate')
 api.add_resource(ServiceRequestStatusUpdateForProfessionals, '/professional/service_request')
 
 
-api.add_resource(BlockUserResource, '/block_user')
-api.add_resource(UnblockUserResource, '/unblock_user')
+api.add_resource(BlockUserResource, '/user/block')
+api.add_resource(UnblockUserResource, '/user/unblock')
+api.add_resource(FlagProfessional, '/professional/flag')
+api.add_resource(ActivateProfessional, '/professional/activate')

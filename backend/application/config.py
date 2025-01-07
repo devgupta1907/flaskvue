@@ -13,3 +13,9 @@ class LocalDevelopmentConfig(Config):
     SECURITY_PASSWORD_SALT = "6#y2L485pddfdgxec"
     WTF_CSRF_ENABLED = False
     SECURITY_TOKEN_AUTHENTICATION_HEADER = "Authentication-Token"
+
+    CACHE_TYPE = "RedisCache"
+    CACHE_DEFAULT_TIMEOUT = 30
+    CACHE_REDIS_PORT = 6379
+
+    

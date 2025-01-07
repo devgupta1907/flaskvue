@@ -1,6 +1,8 @@
 # Backend
 backend/env/
-backend/migrations/
+backend/__pycache__
+backend/migrations
+backend/application/__pycache__
 
 # Frontend
 frontend/.vscode/

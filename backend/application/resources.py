@@ -1,12 +1,14 @@
-from flask import jsonify, abort, request
+from flask import jsonify, abort, request, current_app as app
 from flask_restful import Api, Resource, fields, reqparse, marshal_with
 from flask_security import auth_required, roles_required, current_user
 from .models import db, User, Category, Customer, Professional, Service, ServiceRequest
 
+cache = app.cache
 api = Api(prefix='/api')
 
 
 class CategoryResource(Resource):
+    @cache.cached(timeout=300, key_prefix='categories_list')
     def get(self):
         categories = Category.query.all()
 
@@ -34,6 +36,8 @@ class CategoryResource(Resource):
         new_category = Category(name=name)
         db.session.add(new_category)
         db.session.commit()
+
+        cache.delete('categories_list')
         
         return {
             **new_category.to_dict(),
@@ -61,6 +65,8 @@ class CategoryResource(Resource):
         category_to_update.name = new_category_name
         db.session.commit()
 
+        cache.delete('categories_list')
+
         return {
             **category_to_update.to_dict(),
             'service_count': Service.query.filter_by(category_id=existing_category_id).count()
@@ -84,6 +90,9 @@ class CategoryResource(Resource):
         
         db.session.delete(existing_category)
         db.session.commit()
+
+        cache.delete('categories_list')
+        
         return {
             'message': 'Category deleted successfully'
         }

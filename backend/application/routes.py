@@ -1,8 +1,30 @@
-from flask import current_app as app, jsonify, request
+from flask import current_app as app, jsonify, request, send_file
 from flask_security import auth_required, verify_password, hash_password
 from .models import db, User, Customer, Professional
+from datetime import datetime
+from application.celery.tasks import add, create_csv
+from celery.result import AsyncResult
 
 datastore = app.security.datastore
+cache = app.cache
+
+
+
+@app.route('/create_report')
+def create_report():
+    task = create_csv.delay()
+    return {'task_id': task.id}, 200
+
+
+@app.route('/get_report/<id>')
+def get_report(id):
+    result = AsyncResult(id)
+    if result.ready():
+        return send_file(f'./application/celery/downloads/{result.result}'), 200
+    return jsonify({
+        'message': 'Task not ready'
+    }), 405
+
 
 @app.route('/register', methods=["POST"])
 def register():
@@ -112,3 +134,9 @@ def login():
     return jsonify({
         'message': 'Password did not match'
     }), 409
+
+
+@app.route('/time')
+@cache.cached(timeout=5)
+def get_time():
+    return {'time': str(datetime.now())}

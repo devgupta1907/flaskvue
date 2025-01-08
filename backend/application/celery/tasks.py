@@ -1,6 +1,7 @@
 from celery import shared_task
 import flask_excel
-from application.models import ServiceRequest
+from application.models import ServiceRequest, Professional
+from .mail_service import send_email
 
 
 @shared_task(ignore_result = False)
@@ -18,3 +19,24 @@ def create_csv():
         file.write(csv_out.data)
     
     return 'report.csv'
+
+
+@shared_task(ignore_result = False)
+def email_reminder_to_professionals():
+    professionals = Professional.query.all()
+
+    for professional in professionals:
+        pending_service_requests = ServiceRequest.query.filter(
+            ServiceRequest.professional_id == professional.user_id,
+            ServiceRequest.status == "REQUESTED"
+        ).count()
+
+        email_id = professional.user.email
+        if pending_service_requests > 0:
+            name = professional.user.name
+
+            content = f'Hello, Mr. {name}. Hope you are doing good.\n You have {pending_service_requests} pending requests. Please review and accept those requests. Or if you are not available, you can reject them. \n Thank you.'
+
+            send_email(email_id, 'Pending Service Requests', content)
+        else:
+            send_email(email_id, 'No Pending Service Requests', 'Cool, No pending service requests')

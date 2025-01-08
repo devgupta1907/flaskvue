@@ -35,6 +35,7 @@ with app.app_context():
     db.create_all() 
 
 import application.routes
+import application.celery.celery_schedule
 
 excel.init_excel(app)
 

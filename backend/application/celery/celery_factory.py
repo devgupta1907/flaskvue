@@ -1,11 +1,13 @@
 from celery import Celery, Task
 from flask import Flask
+from zoneinfo import ZoneInfo
+from datetime import datetime
 
 
 class CeleryConfig():
     broker_url = 'redis://localhost:6379/0'
     result_backend = 'redis://localhost:6379/1'
-    timezone = 'Asia/Kolkata'
+    timezone = "Asia/Kolkata"
 
 def celery_init_app(app: Flask) -> Celery:
     class FlaskTask(Task):

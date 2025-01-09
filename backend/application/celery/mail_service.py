@@ -13,7 +13,7 @@ def send_email(to, subject, content):
     message['Subject'] = subject
     message['From'] = SENDER_EMAIL
 
-    message.attach(MIMEText(content, 'plain'))
+    message.attach(MIMEText(content, 'html'))
 
     with smtplib.SMTP(host=SMTP_SERVER, port=SMTP_PORT) as client:
         client.send_message(message)

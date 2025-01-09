@@ -1,7 +1,9 @@
 from celery import shared_task
+from jinja2 import Environment, FileSystemLoader
 import flask_excel
-from application.models import ServiceRequest, Professional
+from application.models import ServiceRequest, Professional, Customer
 from .mail_service import send_email
+
 
 
 @shared_task(ignore_result = False)
@@ -40,3 +42,24 @@ def email_reminder_to_professionals():
             send_email(email_id, 'Pending Service Requests', content)
         else:
             send_email(email_id, 'No Pending Service Requests', 'Cool, No pending service requests')
+
+
+@shared_task(ignore_result = False)
+def email_report_to_customers():
+    env = Environment(loader=FileSystemLoader('./application/email_templates'))
+    template = env.get_template('customer_report.html')
+    
+    customers = Customer.query.all()
+
+    for customer in customers:
+        email_id = customer.user.email
+        service_requests = customer.service_requests
+
+        template_data = {
+            "customer": customer,
+            "service_requests": service_requests
+        }
+
+        content = template.render(template_data)
+
+        send_email(email_id, 'Monthly Customer Report', content)

@@ -18,6 +18,14 @@
               <h5 class="card-title text-center">
                 {{ professional.name }}
               </h5>
+              <p class="card-text text-center">
+                <span v-if="professional.rating === 0">
+                  Be the first to hire this professional
+                </span>
+                <span v-else>
+                  {{ '💛'.repeat(Math.round(professional.rating)) }}
+                </span>
+              </p>
               <div class="text-center">
                 <button class="btn btn-warning" @click="createServiceRequest(service_id, professional.id)">Book Now</button>
               </div>

@@ -9,7 +9,6 @@ datastore = app.security.datastore
 cache = app.cache
 
 
-
 @app.route('/create_report')
 def create_report():
     task = create_csv.delay()
@@ -52,7 +51,7 @@ def register():
 
             if not pincode:
                 return jsonify({
-                'message': 'Payload not complete'
+                'message': 'Payload not complete. Pincode?'
             }), 400
 
             user = datastore.create_user(name=name, email=email, password=hash_password(password), roles=[role], active=True)
@@ -65,9 +64,9 @@ def register():
             work_exp = data.get('work_exp')
             service_id = data.get('service_id')
 
-            if not work_exp or not service_id:
+            if work_exp is None or service_id is None:
                 return jsonify({
-                'message': 'Payload not complete'
+                'message': 'Payload not complete. WorkExp? Service?'
             }), 400
 
             user = datastore.create_user(name=name, email=email, password=hash_password(password), roles=[role], active=True)

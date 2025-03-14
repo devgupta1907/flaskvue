@@ -6,7 +6,6 @@
             <p class="lead">
                 {{ customer.email }} | 
                 <span class="badge rounded-pill text-bg-info">{{ customer.pincode }}</span>
-                <!-- <a href="{{ url_for('update_customer') }}" type="submit" class="btn badge text-bg-warning">Update Profile</a> -->
             </p>
         </div>
         </div>
@@ -33,7 +32,6 @@
             <td>{{ request.status }}</td>
             <td>
               <button v-if="request.status === 'REQUESTED'" class="btn btn-danger" @click="updateServiceRequest('customer', request.request_id, 'DELETED')">Delete</button>
-              <!-- <button v-if="request.status === 'APPROVED'" class="btn btn-danger" @click="updateServiceRequest('customer', request.request_id, 'CLOSED')">Close</button> -->
               <div v-if="request.status === 'APPROVED'">
                 <button class="btn btn-danger" @click="request.showRatingInput = true">Close</button>
                 <div v-if="request.showRatingInput" class="mt-2">

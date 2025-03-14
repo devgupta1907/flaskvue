@@ -14,7 +14,6 @@
             <div class="mb-3">
               <label for="email" class="form-label">Email address</label>
               <input type="email" v-model="email" class="form-control" name="email" required>
-              <!-- <div id="emailHelp" class="form-text">This email will be required for login.</div> -->
             </div>
   
             <div class="mb-3">
@@ -68,7 +67,7 @@
 
         alert("Login Successful!")
         messageResponse.role === 'admin' ? 
-          router.push({ name: 'CategoriesAdmin' }) : 
+          router.push({ name: 'AdminDashboard' }) : 
           router.push({ name: 'CategoriesUser' })
 
       } catch (error) {

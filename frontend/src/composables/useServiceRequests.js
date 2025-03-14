@@ -1,5 +1,4 @@
 
-
 const createServiceRequest = async (service_id, professional_id) => {
     try {
         const response = await fetch('http://localhost:5000/api/service_request', {

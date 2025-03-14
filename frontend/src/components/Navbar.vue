@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">Paddu Housy</a>
+      <a class="navbar-brand" href="#">MadyPro</a>
       <button
         class="navbar-toggler"
         type="button"
@@ -33,6 +33,9 @@
 
           <!-- Logged In as Admin -->
           <template v-else-if="role === 'admin'">
+            <li class="nav-item">
+              <router-link class="nav-link" :to="{ name: 'AdminDashboard' }">Dashboard</router-link>
+            </li>
             <li class="nav-item">
               <router-link class="nav-link" :to="{ name: 'CategoriesAdmin' }">Categories</router-link>
             </li>
@@ -80,14 +83,12 @@
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { useRouter } from 'vue-router';
 
-// Router instance
+
 const router = useRouter();
 
-// Reactive state from localStorage
 const email = ref(localStorage.getItem('email'));
 const role = ref(localStorage.getItem('role'));
 
-// Compute `isLoggedIn` dynamically
 const isLoggedIn = computed(() => !!email.value && !!role.value);
 
 // Sync localStorage changes
@@ -97,26 +98,25 @@ const updateLocalStorage = () => {
 
   // Redirect to login if `localStorage` is cleared
   if (!email.value || !role.value) {
-    // isLoggedIn.value = false; // Ensure UI updates
-    router.push('/login'); // Redirect to login
+    router.push('/login');
   }
 };
 
-// Add storage event listener
+// Adding storage event listener
 onMounted(() => {
   window.addEventListener('storage', updateLocalStorage);
   updateLocalStorage();
 });
 
-// Remove storage event listener on component unmount
+// Removing storage event listener on component unmount
 onUnmounted(() => {
   window.removeEventListener('storage', updateLocalStorage);
 });
 
-// Logout function
+
 const logout = () => {
   localStorage.clear();
-  window.dispatchEvent(new Event('storage')); // Trigger reactive updates
+  window.dispatchEvent(new Event('storage'));
   router.push('/login');
 };
 </script>

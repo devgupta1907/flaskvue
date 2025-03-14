@@ -1,10 +1,19 @@
 from flask import jsonify, abort, request, current_app as app
 from flask_restful import Api, Resource, fields, reqparse, marshal_with
 from flask_security import auth_required, roles_required, current_user
+from .utility import chart_for_category_services
 from .models import db, User, Category, Customer, Professional, Service, ServiceRequest
 
 cache = app.cache
 api = Api(prefix='/api')
+
+
+class ChartResource(Resource):
+    def get(self):
+        image_filename = chart_for_category_services()
+        return jsonify({"message": "Chart created successfully", "filename": image_filename})
+
+api.add_resource(ChartResource, '/chart')
 
 
 class CategoryResource(Resource):
@@ -265,6 +274,7 @@ class CurrentProfessionalResource(Resource):
             'work_exp': professional.work_exp,
             'service': professional.service.name,
             'rating': professional.rating,
+            'status': professional.status,
             'service_requests': service_requests,
         }, 200
 
@@ -278,7 +288,8 @@ class ProfessionalsByServiceResource(Resource):
         unblocked_professionals = [
             {
                 'id': professional.user_id,
-                'name': professional.user.name
+                'name': professional.user.name,
+                'rating': professional.rating
             }
             for professional in professionals
             if professional.status == "ACTIVE"

@@ -5,7 +5,6 @@
             <router-link class="btn btn-warning me-2" :to="{ name: 'CreateService' }">Add New Service</router-link>
         </div>
     </div>
-    <GetReportForAdmin />
 
     <Search placeholder="Search services" @search="filterServices" />
 
@@ -34,7 +33,7 @@
                             Update
                         </router-link>   
                         
-                        <button class="btn btn-danger" @click="deleteService(service.id)">Delete</button>
+                        <button v-if="service.professional_count === 0" class="btn btn-danger" @click="deleteService(service.id)">Delete</button>
                     </td>
                 </tr>
             </tbody>
@@ -46,7 +45,6 @@
     import { onMounted, ref, computed } from 'vue';
     import { useServices } from '@/composables/useServices';
     import Search from './Search.vue';
-    import GetReportForAdmin from './GetReportForAdmin.vue';
         
     const { services, fetchServices } = useServices();
 

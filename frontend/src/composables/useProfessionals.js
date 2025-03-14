@@ -1,6 +1,5 @@
 import { ref } from 'vue';
 
-// Shared state
 const professionals = ref([]);
 const professionalsByService = ref([])
 const current_professional = ref([])

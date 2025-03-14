@@ -1,8 +1,8 @@
 import { ref } from 'vue';
 
-// Shared state
 const customers = ref([]);
 const current_customer = ref([])
+
 
 const fetchCustomers = async () => {
   try {

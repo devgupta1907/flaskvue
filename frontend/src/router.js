@@ -1,29 +1,35 @@
-
 import { createRouter, createWebHistory } from 'vue-router';
 
-import Books from './components/Books.vue';
-import CategoriesUserPage from './components/CategoriesUserPage.vue';
+// Registration and Login Pages
 import Register from './components/Register.vue';
 import Login from './components/Login.vue';
+
+// Admin Pages
 import CustomersAdminPage from './components/CustomersAdminPage.vue';
 import ProfessionalsAdminPage from './components/ProfessionalsAdminPage.vue';
 import CategoriesAdminPage from './components/CategoriesAdminPage.vue';
-import UpdateCategoryPage from './components/UpdateCategoryPage.vue';
-import CreateCategoryPage from './components/CreateCategoryPage.vue';
 import ServicesAdminPage from './components/ServicesAdminPage.vue';
+
+// Entity Creaton Pages
+import CreateCategoryPage from './components/CreateCategoryPage.vue';
 import CreateServicePage from './components/CreateServicePage.vue';
+
+// Update Pages
+import UpdateCategoryPage from './components/UpdateCategoryPage.vue';
 import UpdateServicePage from './components/UpdateServicePage.vue';
+
+// /User Pages
+import CategoriesUserPage from './components/CategoriesUserPage.vue';
 import ServicesUserPage from './components/ServicesUserPage.vue';
 import ProfessionalsByServicePage from './components/ProfessionalsByServicePage.vue';
+
+// Dashboards
 import CustomerDashboard from './components/CustomerDashboard.vue';
 import ProfessionalDashboard from './components/ProfessionalDashboard.vue';
+import AdminDashboardPage from './components/AdminDashboardPage.vue';
 
 
 const routes = [
-    { path: '/books', 
-      component: Books, 
-      name: 'Books'
-    },
     { path: '/category', 
       component: CategoriesUserPage, 
       name: 'CategoriesUser'
@@ -54,6 +60,11 @@ const routes = [
       component: ProfessionalDashboard, 
       name: 'ProfessionalDashboard', 
       meta: { requiresAuth: true, requiresRole: 'professional' }
+    },
+    { path: '/admin-dashboard', 
+      component: AdminDashboardPage, 
+      name: 'AdminDashboard', 
+      meta: { requiresAuth: true, requiresRole: 'admin' }
     },
     { path: '/admin-customers', 
       component: CustomersAdminPage, 

@@ -1,10 +1,8 @@
-
 <template>
     <button class="btn btn-danger" @click="blockUser(userId)">Block</button>
 </template>
 
 <script setup>
-    import { defineProps } from 'vue';
 
     defineProps({
         userId: {

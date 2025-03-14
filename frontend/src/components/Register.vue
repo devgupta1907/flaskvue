@@ -74,18 +74,9 @@
   const password = ref('')
   const userType = ref('')
   const pincode = ref()
-  const workExp = ref()
+  const workExp = ref(0)
   const newService = ref()
 
-  // const validateWorkExp = () => {
-  //   if (workExp.value < 0) {
-  //     workExpError.value = "Experience cannot be negative"
-  //   } else if (workExp.value > 20) {
-  //     workExpError.value = "Experience greater than 20 years is not allowed."
-  //   } else {
-  //     workExpError.value = ""
-  //   }
-  // }
 
   const workExpError = computed(() => {
     if (workExp.value < 0) {
@@ -93,7 +84,7 @@
     } else if (workExp.value > 20) {
       return "Experience greater than 20 years is not allowed.";
     }
-    return null; // No error
+    return null;
   });
 
   const registerUser = async () => {
@@ -104,7 +95,7 @@
     }
     if (userType.value === "professional") {
       registrationDetails.role = "professional"
-      registrationDetails.work_exp = workExp.value
+      registrationDetails.work_exp = Number(workExp.value) || 0
       registrationDetails.service_id = newService.value
     } else if (userType.value === "customer") {
       registrationDetails.role = "customer"

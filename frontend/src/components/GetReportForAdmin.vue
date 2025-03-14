@@ -1,5 +1,5 @@
 <template>
-    <button class="btn btn-info" @click="createReport">Get Report</button>
+    <button class="btn btn-warning" @click="createReport">Get Report of Closed Service Requests</button>
 </template>
 
 <script setup>

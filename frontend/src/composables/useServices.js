@@ -1,7 +1,7 @@
 import { ref } from 'vue';
 
-
 const services = ref([]);
+
 
 const fetchServices = async () => {
   try {

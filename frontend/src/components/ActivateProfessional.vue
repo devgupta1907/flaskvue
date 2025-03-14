@@ -1,4 +1,3 @@
-
 <template>
     <button class="btn btn-info" @click="activateProfessional(professionalId)">Activate</button>
 </template>

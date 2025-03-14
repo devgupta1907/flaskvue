@@ -5,8 +5,8 @@
         <div class="text-center">
             <p class="lead">
                 {{ professional.email }} |
-                <span class="badge rounded-pill text-bg-info">{{ professional.rating }}</span>
-                <!-- <a href="{{ url_for('update_customer') }}" type="submit" class="btn badge text-bg-warning">Update Profile</a> -->
+                <span class="badge rounded-pill text-bg-info">{{ professional.rating }}</span> |
+                <span class="badge rounded-pill text-bg-info">{{ professional.status }}</span>
             </p>
         </div>
         </div>
